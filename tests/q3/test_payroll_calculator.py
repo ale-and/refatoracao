@@ -14,7 +14,7 @@ def test_net_salary_examples():
     )
     salary1 = calc.monthly_net_salary(e1)
     assert salary1 == pytest.approx(
-        2800 + (10 * 25) - ((2800 + (10 * 25)) * 0.08) - 120 + 450, abs=0.01
+        2800 + (10 * 25) - ((2800 + (10 * 25)) * 0.12) - 120 + 450, abs=0.01
     )
 
     e2 = Employee(
@@ -28,6 +28,13 @@ def test_net_salary_examples():
 
 
 def test_refactor_goal_replace_temps_with_queries():
-    # TODO: após refatorar, use queries (métodos) no lugar de muitos temporários.
-    # Testes acima devem continuar passando.
-    pass
+    calc = PayrollCalculator()
+    # faixa intermediária (12%) com várias horas extras
+    e = Employee(5000, [Overtime(10, 20), Overtime(5, 40)], True, 100)
+    gross = 5000 + 200 + 200
+    assert calc.monthly_net_salary(e) == pytest.approx(
+        gross - gross * 0.12 - 100 + 450, abs=0.01
+    )
+    # limite exato da faixa de 8%
+    e = Employee(3000, [], False, 0)
+    assert calc.monthly_net_salary(e) == pytest.approx(3000 * 0.92, abs=0.01)
