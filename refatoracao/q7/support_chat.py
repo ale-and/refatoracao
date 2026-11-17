@@ -11,14 +11,28 @@ class User:
     def is_banned(self) -> bool:
         return self.banned
 
+    def greeting(self) -> str:
+        if self.is_banned():
+            return "Conta bloqueada. Contate o suporte."
+        if self.name is None or self.name.strip() == "":
+            return "Olá! Como posso ajudar?"
+        return f"Olá, {self.name}! Como posso ajudar?"
+
+
+class GuestUser(User):
+    """Null Object: representa a ausência de usuário."""
+
+    def __init__(self):
+        super().__init__(name=None, banned=False)
+
+    def greeting(self) -> str:
+        return "Olá! Quer continuar como visitante?"
+
+
+GUEST = GuestUser()
+
 
 class SupportChat:
 
     def greeting(self, user: User | None) -> str:
-        if user is None:
-            return "Olá! Quer continuar como visitante?"
-        if user.is_banned():
-            return "Conta bloqueada. Contate o suporte."
-        if user.name is None or user.name.strip() == "":
-            return "Olá! Como posso ajudar?"
-        return f"Olá, {user.name}! Como posso ajudar?"
+        return (user or GUEST).greeting()

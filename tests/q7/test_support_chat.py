@@ -1,4 +1,4 @@
-from refatoracao.q7.support_chat import SupportChat, User
+from refatoracao.q7.support_chat import GUEST, GuestUser, SupportChat, User
 
 
 def test_greeting_examples():
@@ -11,5 +11,9 @@ def test_greeting_examples():
 
 
 def test_refactor_goal_introduce_null_object_remove_null_check():
-    # TODO: eliminar if user is None via Null Object / GuestUser mantendo comportamento.
-    pass
+    chat = SupportChat()
+
+    assert isinstance(GUEST, User)
+    assert not GUEST.is_banned()
+    assert chat.greeting(GuestUser()) == chat.greeting(None)
+    assert chat.greeting(User(None, False)) == "Olá! Como posso ajudar?"
