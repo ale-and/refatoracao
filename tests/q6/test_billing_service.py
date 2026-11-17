@@ -20,6 +20,18 @@ def test_price_table_examples():
 
 
 def test_refactor_goal_replace_conditional_with_polymorphism():
-    # TODO: após refatorar, o if/elif deve desaparecer (cada plano com sua política).
-    # Testes acima devem continuar passando.
-    pass
+    svc = BillingService()
+
+    # suporte prioritário não cobra no FREE
+    assert svc.monthly_price(Plan.FREE, 10, True) == pytest.approx(0.0, abs=0.001)
+    assert svc.monthly_price(Plan.STUDENT, 10, True) == pytest.approx(19.90 + 59.90, abs=0.01)
+
+    # desconto de 5% do PRO vale só acima de 200 usuários e inclui o suporte
+    assert svc.monthly_price(Plan.PRO, 200, False) == pytest.approx(49.90 + 200 * 1.25, abs=0.01)
+    assert svc.monthly_price(Plan.PRO, 250, True) == pytest.approx(
+        (49.90 + 250 * 1.25 + 59.90) * 0.95, abs=0.01
+    )
+    # ENTERPRISE não tem desconto por volume
+    assert svc.monthly_price(Plan.ENTERPRISE, 500, False) == pytest.approx(
+        199.90 + 500 * 0.90, abs=0.01
+    )
