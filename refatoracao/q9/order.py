@@ -9,6 +9,14 @@ class Customer:
     def is_vip(self) -> bool:
         return self.vip
 
+    def loyalty_discount(self) -> float:
+        discount = 0.0
+        if self.is_vip():
+            discount += 25.0
+        if self.years_as_customer >= 5:
+            discount += 15.0
+        return discount
+
 
 class Order:
 
@@ -18,9 +26,5 @@ class Order:
         self._discount_rate = discount_rate
 
     def final_total(self) -> float:
-        discount = self._total * self._discount_rate
-        if self._customer.is_vip():
-            discount += 25.0
-        if self._customer.years_as_customer >= 5:
-            discount += 15.0
+        discount = self._total * self._discount_rate + self._customer.loyalty_discount()
         return max(0.0, self._total - discount)
